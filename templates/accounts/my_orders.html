@@ -1,39 +1,79 @@
-{% extends 'base.html' %}
-
-
-{% block content %}
-
-<section class="section-conten padding-y" style="min-height:84vh">
-
-<!-- ============================ COMPONENT LOGIN   ================================= -->
-
-
-
-	<div class="card mx-auto" style="max-width: 600px; margin-top:100px;">
-
-      <div class="card-body">
-      <h4 class="card-title mb-4">Forgot Password</h4>
-      {% include 'includes/alerts.html' %}
-      <form action="{% url 'forgotPassword' %}" method="POST">
-        {% csrf_token %}
-          <div class="form-group">
-			 <input type="email" class="form-control" placeholder="Email Address" name="email">
-          </div> <!-- form-group// -->
-
-          <div class="form-group">
-          	<a href="{% url 'login' %}" class="float-right">Got password? Login</a>
-
-          </div> <!-- form-group form-check .// -->
-          <div class="form-group">
-              <button type="submit" class="btn btn-primary btn-block"> Submit  </button>
-          </div> <!-- form-group// -->
-      </form>
-      </div> <!-- card-body.// -->
-    </div> <!-- card .// -->
-
-     <p class="text-center mt-4">Don't have account? <a href="{% url 'register' %}">Sign up</a></p>
-     <br><br>
-<!-- ============================ COMPONENT LOGIN  END.// ================================= -->
-
+{% extends 'base.html' %} {% block content %}
+<section class="section-conten padding-y bg" style="min-height: 70vh">
+    <div class="container">
+        <div class="row">
+            {% include 'includes/dashboard_sidebar.html' %}
+            <main class="col-md-9">
+                <div class="card">
+                    <div
+                        class="card-header d-flex align-items-center justify-content-between"
+                    >
+                        <h5 class="mb-0">My Orders</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        {% include 'includes/alerts.html' %} {% if orders %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Order Number</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Ordered?</th>
+                                        <th class="text-right">Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for o in orders %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ o.order_number }}</td>
+                                        <td>
+                                            {{ o.created_at|date:'Y-m-d H:i' }}
+                                        </td>
+                                        <td>{{ o.status }}</td>
+                                        <td>
+                                            {% if o.is_ordered %}<span
+                                                class="badge badge-success"
+                                                >Yes</span
+                                            >{% else %}<span
+                                                class="badge badge-secondary"
+                                                >No</span
+                                            >{% endif %}
+                                        </td>
+                                        <td class="text-right">
+                                            ${{ o.order_total }}
+                                        </td>
+                                        <td>
+                                            <a
+                                                href="{% url 'order_detail' o.order_number %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                                >Details</a
+                                            >
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="p-4">
+                            <p class="mb-1 text-muted">
+                                You have no completed orders yet.
+                            </p>
+                            <a
+                                href="{% url 'store' %}"
+                                class="btn btn-sm btn-primary"
+                                >Go shopping</a
+                            >
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
 </section>
 {% endblock %}

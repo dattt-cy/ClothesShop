@@ -1,78 +1,95 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from carts.models import CartItem
 from .forms import OrderForm
 import datetime
 from .models import Order, Payment, OrderProduct
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.utils.crypto import get_random_string
 import json
 from store.models import Product
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 
-def payments(request):
-    body = json.loads(request.body)
-    order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
-
-    # Store transaction details inside Payment model
-    payment = Payment(
-        user = request.user,
-        payment_id = body['transID'],
-        payment_method = body['payment_method'],
-        amount_paid = order.order_total,
-        status = body['status'],
-    )
-    payment.save()
-
-    order.payment = payment
-    order.is_ordered = True
-    order.save()
-
-    # Move the cart items to Order Product table
+def _finalize_order(request, order, payment):
+    """Internal helper: move cart items to OrderProduct, reduce stock, clear cart, send email."""
     cart_items = CartItem.objects.filter(user=request.user)
-
     for item in cart_items:
-        orderproduct = OrderProduct()
-        orderproduct.order_id = order.id
-        orderproduct.payment = payment
-        orderproduct.user_id = request.user.id
-        orderproduct.product_id = item.product_id
-        orderproduct.quantity = item.quantity
-        orderproduct.product_price = item.product.price
-        orderproduct.ordered = True
-        orderproduct.save()
-
-        cart_item = CartItem.objects.get(id=item.id)
-        product_variation = cart_item.variations.all()
-        orderproduct = OrderProduct.objects.get(id=orderproduct.id)
-        orderproduct.variations.set(product_variation)
-        orderproduct.save()
-
-
-        # Reduce the quantity of the sold products
-        product = Product.objects.get(id=item.product_id)
+        op = OrderProduct.objects.create(
+            order=order,
+            payment=payment,
+            user=request.user,
+            product=item.product,
+            quantity=item.quantity,
+            product_price=item.product.price,
+            ordered=True,
+        )
+        op.variations.set(item.variations.all())
+        # reduce stock
+        product = item.product
         product.stock -= item.quantity
         product.save()
-
-    # Clear cart
-    CartItem.objects.filter(user=request.user).delete()
-
-    # Send order recieved email to customer
+    cart_items.delete()
+    # send email
     mail_subject = 'Thank you for your order!'
     message = render_to_string('orders/order_recieved_email.html', {
         'user': request.user,
         'order': order,
     })
-    to_email = request.user.email
-    send_email = EmailMessage(mail_subject, message, to=[to_email])
-    send_email.send()
+    EmailMessage(mail_subject, message, to=[request.user.email]).send()
 
-    # Send order number and transaction id back to sendData method via JsonResponse
-    data = {
-        'order_number': order.order_number,
-        'transID': payment.payment_id,
-    }
-    return JsonResponse(data)
+
+@login_required
+def payments(request):
+    """Existing JSON-based payment endpoint (e.g. PayPal)"""
+    body = json.loads(request.body)
+    order = get_object_or_404(Order, user=request.user, is_ordered=False, order_number=body['orderID'])
+    payment = Payment.objects.create(
+        user=request.user,
+        payment_id=body['transID'],
+        payment_method=body['payment_method'],
+        amount_paid=order.order_total,
+        status=body['status'],
+    )
+    order.payment = payment
+    order.is_ordered = True
+    order.save()
+    _finalize_order(request, order, payment)
+    return JsonResponse({'order_number': order.order_number, 'transID': payment.payment_id})
+
+
+@login_required
+def cod_payment(request, order_number):
+    """Finalize order via COD.
+    - Nếu order đã is_ordered: chuyển thẳng sang chi tiết.
+    - Nếu chưa: tạo payment COD và finalize.
+    - Nếu không thuộc user: 404.
+    """
+    try:
+        order = Order.objects.get(user=request.user, order_number=order_number)
+    except Order.DoesNotExist:
+        # Giữ 404 chuẩn để tránh lộ order người khác
+        raise
+
+    if order.is_ordered:
+        messages.info(request, 'Đơn hàng đã được hoàn tất trước đó.')
+        return redirect('order_detail', order_id=order.order_number)
+
+    payment = Payment.objects.create(
+        user=request.user,
+        payment_id='COD-' + get_random_string(10),
+        payment_method='COD',
+        amount_paid=order.order_total,
+        status='PENDING',
+    )
+    order.payment = payment
+    order.is_ordered = True
+    order.save()
+    _finalize_order(request, order, payment)
+    messages.success(request, 'Đơn hàng COD đã được ghi nhận.')
+    return redirect('order_detail', order_id=order.order_number)
 
 def place_order(request, total=0, quantity=0,):
     current_user = request.user

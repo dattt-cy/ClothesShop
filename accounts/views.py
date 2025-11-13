@@ -3,6 +3,9 @@ from .forms import RegistrationForm, UserForm, UserProfileForm
 from .models import Account, UserProfile
 from orders.models import Order, OrderProduct
 from django.contrib import messages, auth
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
@@ -261,26 +264,42 @@ def edit_profile(request):
 @login_required(login_url='login')
 def change_password(request):
     if request.method == 'POST':
-        current_password = request.POST['current_password']
-        new_password = request.POST['new_password']
-        confirm_password = request.POST['confirm_password']
+        current_password = request.POST.get('current_password', '')
+        new_password = request.POST.get('new_password', '')
+        confirm_password = request.POST.get('confirm_password', '')
 
-        user = Account.objects.get(username__exact=request.user.username)
+        user = request.user  # đã đăng nhập do decorator
 
-        if new_password == confirm_password:
-            success = user.check_password(current_password)
-            if success:
-                user.set_password(new_password)
-                user.save()
-                # auth.logout(request)
-                messages.success(request, 'Password updated successfully.')
-                return redirect('change_password')
-            else:
-                messages.error(request, 'Please enter valid current password')
-                return redirect('change_password')
-        else:
-            messages.error(request, 'Password does not match!')
+        # 1. Kiểm tra mật khẩu hiện tại
+        if not user.check_password(current_password):
+            messages.error(request, 'Mật khẩu hiện tại không đúng.')
             return redirect('change_password')
+
+        # 2. So khớp xác nhận
+        if new_password != confirm_password:
+            messages.error(request, 'Mật khẩu xác nhận không trùng khớp.')
+            return redirect('change_password')
+
+        # 3. Không cho dùng lại mật khẩu cũ
+        if current_password == new_password:
+            messages.error(request, 'Mật khẩu mới phải khác mật khẩu hiện tại.')
+            return redirect('change_password')
+
+        # 4. Chạy qua bộ validator chuẩn của Django
+        try:
+            validate_password(new_password, user=user)
+        except ValidationError as e:
+            for err in e.messages:
+                messages.error(request, err)
+            return redirect('change_password')
+
+        # 5. Lưu và giữ phiên đăng nhập
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)  # tránh bị đăng xuất
+        messages.success(request, 'Đổi mật khẩu thành công.')
+        return redirect('change_password')
+
     return render(request, 'accounts/change_password.html')
 
 

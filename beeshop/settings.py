@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'store',
     'carts',
     'orders',
-    'admin_honeypot',
+    # 'admin_honeypot',  # Tạm thời comment out
 ]
 
 MIDDLEWARE = [
@@ -73,6 +73,7 @@ TEMPLATES = [
                 'category.context_processors.menu_links',
                 'carts.context_processors.counter',
             ],
+            'debug': True,  # Force template reload
         },
     },
 ]
@@ -86,8 +87,16 @@ AUTH_USER_MODEL = 'accounts.Account'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'beeshop_db',
+        'USER': 'root',
+        'PASSWORD': '1234567890aS',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+        },
     }
 }
 

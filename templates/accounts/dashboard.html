@@ -1,51 +1,343 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
 
+<section class="section-conten padding-y bg dashboard-wrap">
+    <style>
+        :root {
+            --brand: #6c5ce7; /* Indigo */
+            --brand-2: #00c9ff; /* Sky */
+            --accent: #ffd166; /* Warm accent */
+            --text-900: #0f172a;
+            --text-600: #475569;
+            --card-bg: #ffffff;
+            --soft: #f8fafc;
+        }
 
-{% block content %}
+        /* Page background flair */
+        .dashboard-wrap {
+            background: radial-gradient(
+                    1200px 600px at -10% -20%,
+                    rgba(108, 92, 231, 0.08),
+                    transparent 60%
+                ),
+                radial-gradient(
+                    800px 400px at 110% 10%,
+                    rgba(0, 201, 255, 0.08),
+                    transparent 60%
+                ),
+                var(--soft);
+        }
 
-<section class="section-conten padding-y bg">
+        .dashboard-hero {
+            background: linear-gradient(
+                135deg,
+                var(--brand) 0%,
+                var(--brand-2) 100%
+            );
+            color: #fff;
+            border-radius: 18px;
+            padding: 28px 28px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.25);
+        }
+        .dashboard-hero:after {
+            content: "";
+            position: absolute;
+            right: -40px;
+            top: -40px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            filter: blur(2px);
+        }
 
-{% include 'includes/alerts.html' %}
-<div class="container">
-	<div class="row">
-	{% include 'includes/dashboard_sidebar.html' %}
-	<main class="col-md-9">
-		<article class="card">
-		<header class="card-header">
-			<strong class="d-inline-block mr-3">Logged in as:</strong>
-			<span>{{user.full_name}}</span>
-		</header>
-		<div class="card-body">
-			<div class="row">
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            overflow: hidden;
+        }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .avatar-lg {
+            width: 72px;
+            height: 72px;
+        }
 
-			<div class="col-md-6">
-				<div class="card" style="text-align:center;">
-					<div class="card-body">
-						<h5 class="card-title">Total Orders</h5>
-						<h4>{{orders_count}}</h4>
-						<a href="{% url 'my_orders' %}">View Orders</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="card" style="text-align:center;">
-					<div class="card-body">
-						<img src="{{userprofile.profile_picture.url}}" alt="User Profile Picture" width="50" height="50" style="border-radius:50%;">
-						<p class="mb-0">{{user.email}}</p>
-						<p>{{user.phone_number}}</p>
-					</div>
-				</div>
-			</div>
+        .hero-title {
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+        .hero-sub {
+            opacity: 0.9;
+        }
 
-			</div> <!-- row.// -->
-		</div> <!-- card-body .// -->
+        .stat-card {
+            border: 1px solid #edf2f7;
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        /* Make the first stats card a bit wider to avoid text wrapping */
+        .stat-card--wide {
+            min-width: 300px;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(2, 6, 23, 0.08);
+        }
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #eef2ff 0%, #eff6ff 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand);
+        }
+        .stat-value {
+            font-weight: 700;
+        }
+        .muted {
+            color: var(--text-600);
+        }
 
-		</article> <!-- order-group.// -->
-	</main>
-</div> <!-- row.// -->
-</div>
+        .profile-card {
+            border: 1px solid #edf2f7;
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06);
+        }
 
+        .btn-soft {
+            background: #ffffff;
+            color: var(--brand);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 10px;
+        }
+        .btn-soft:hover {
+            background: #f4f6ff;
+            color: #4f46e5;
+        }
+        .link-lightish {
+            color: #e9ecff;
+        }
+        .link-lightish:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
 
+        /* Tiny animations */
+        .float-in {
+            animation: floatIn 0.35s ease-out both;
+        }
+        @keyframes floatIn {
+            from {
+                transform: translateY(8px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    {% include 'includes/alerts.html' %}
+    <div class="container">
+        <div class="row">
+            {% include 'includes/dashboard_sidebar.html' %}
+
+            <main class="col-md-9">
+                <!-- Hero / Greeting -->
+                <div class="dashboard-hero mb-4 float-in">
+                    <div
+                        class="d-flex align-items-center justify-content-between flex-wrap"
+                    >
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-lg mr-3">
+                                {% if userprofile.profile_picture %}
+                                <img
+                                    src="{{ userprofile.profile_picture.url }}"
+                                    alt="{{ user.full_name }}"
+                                />
+                                {% else %}
+                                <i class="fa fa-user"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h4 class="mb-1 hero-title">
+                                    Xin chào, {{ user.full_name }}
+                                </h4>
+                                <div class="hero-sub">
+                                    Chúc bạn một ngày mua sắm thật vui vẻ ✨
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3 mt-md-0">
+                            <a
+                                class="btn btn-light btn-soft d-inline-flex align-items-center"
+                                href="{% url 'my_orders' %}"
+                                ><i class="fas fa-shopping-bag fa-fw mr-2"></i
+                                >Đơn hàng của tôi</a
+                            >
+                            <a
+                                class="btn btn-light btn-soft ml-2 d-inline-flex align-items-center"
+                                href="{% url 'edit_profile' %}"
+                                ><i class="fas fa-user-cog fa-fw mr-2"></i>Chỉnh
+                                sửa hồ sơ</a
+                            >
+                            <a
+                                class="btn btn-light btn-soft ml-2 d-inline-flex align-items-center"
+                                href="{% url 'change_password' %}"
+                                ><i class="fas fa-lock fa-fw mr-2"></i>Đổi mật
+                                khẩu</a
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats and Profile -->
+                <div class="row">
+                    <div class="col-lg-4 col-sm-6 mb-3">
+                        <div class="stat-card stat-card--wide h-100">
+                            <div
+                                class="d-flex align-items-center justify-content-between flex-nowrap"
+                            >
+                                <div class="d-flex align-items-center">
+                                    <div class="stat-icon mr-3">
+                                        <i class="fas fa-receipt"></i>
+                                    </div>
+                                    <div>
+                                        <div class="muted text-nowrap">
+                                            Tổng số đơn hàng
+                                        </div>
+                                        <div class="h3 mb-0 stat-value">
+                                            {{ orders_count }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-sm-6 mb-3">
+                        <div class="stat-card h-100">
+                            <div class="d-flex align-items-center">
+                                <div class="stat-icon mr-3">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div>
+                                    <div class="muted">
+                                        Lần đăng nhập gần nhất
+                                    </div>
+                                    <div class="stat-value">
+                                        {{ user.last_login|date:"d/m/Y H:i" }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-sm-6 mb-3">
+                        <div class="stat-card h-100">
+                            <div class="d-flex align-items-center">
+                                <div class="stat-icon mr-3">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div>
+                                    <div class="muted">Thành viên từ</div>
+                                    <div class="stat-value">
+                                        {{ user.date_joined|date:"d/m/Y" }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-sm-12 mb-3">
+                        <div class="profile-card h-100">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar mr-3">
+                                    {% if userprofile.profile_picture %}
+                                    <img
+                                        src="{{ userprofile.profile_picture.url }}"
+                                        alt="{{ user.full_name }}"
+                                    />
+                                    {% else %}
+                                    <i class="fas fa-user"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="font-weight-bold">
+                                        {{ user.full_name }}
+                                    </div>
+                                    <div class="small muted">
+                                        {{ user.email }}
+                                    </div>
+                                    {% if user.phone_number %}
+                                    <div class="small mt-1">
+                                        <i class="fas fa-phone mr-1"></i
+                                        ><span class="phone"
+                                            >{{ user.phone_number|default:"Chưa cập nhật" }}</span
+                                        >
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-sm-12 mb-3">
+                        <div
+                            class="profile-card h-100 d-flex align-items-center justify-content-between"
+                        >
+                            <div>
+                                <div class="muted mb-1">
+                                    Trạng thái tài khoản
+                                </div>
+                                <div class="h5 mb-0">
+                                    {% if user.is_active %}
+                                    <span class="text-success"
+                                        ><i class="fas fa-check-circle mr-1"></i
+                                        >Đã kích hoạt</span
+                                    >
+                                    {% else %}
+                                    <span class="text-warning"
+                                        ><i
+                                            class="fas fa-exclamation-circle mr-1"
+                                        ></i
+                                        >Chưa kích hoạt</span
+                                    >
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <a
+                                class="btn btn-light btn-soft d-inline-flex align-items-center"
+                                href="{% url 'edit_profile' %}"
+                                ><i class="fas fa-user-edit fa-fw mr-2"></i>Cập
+                                nhật thông tin</a
+                            >
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
 </section>
 
 {% endblock %}

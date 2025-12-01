@@ -1,171 +1,398 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 
-<div
-    class="container"
-    style="
+<style>
+    .order-detail-wrapper {
+        background: #fafaf8;
+        padding: 30px 0;
+    }
+
+    .invoice-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: 2px solid #dee2e6;
+        overflow: hidden;
+        max-width: 900px;
         margin: 0 auto;
-        width: 50%;
-        padding: 50px;
-        background: #f1f1f1;
-        margin-top: 50px;
-        margin-bottom: 50px;
-    "
->
-    <div class="row invoice row-printable">
-        <div class="col-md-12">
-            <!-- col-lg-12 start here -->
-            <div class="panel panel-default plain" id="dash_0">
-                <!-- Start .panel -->
-                <div class="panel-body p30">
-                    <div class="row">
-                        <!-- Start .row -->
-                        <div class="col-lg-6">
-                            <!-- col-lg-6 start here -->
-                            <div class="invoice-logo">
-                                <img
-                                    src="{% static '/images/logo.png' %}"
-                                    alt="Invoice logo"
-                                    style="max-height: 40px"
-                                />
-                            </div>
-                        </div>
-                        <!-- col-lg-6 end here -->
-                        <div class="col-lg-6">
-                            <!-- col-lg-6 start here -->
-                            <div class="invoice-from">
-                                <ul class="list-unstyled text-right">
-                                    <li><strong>Invoiced To</strong></li>
-                                    <li>{{order.full_name}}</li>
-                                    <li>{{order.full_address}}</li>
-                                    <li>{{order.city}}, {{order.state}}</li>
-                                    <li>{{order.country}}</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <!-- col-lg-6 end here -->
-                        <div class="col-lg-12">
-                            <!-- col-lg-12 start here -->
-                            <div class="invoice-details mt25">
-                                <div class="well">
-                                    <ul class="list-unstyled mb0">
-                                        <li>
-                                            <strong>Order</strong>
-                                            #{{order.order_number}}
-                                        </li>
-                                        <li>
-                                            <strong>Transaction ID</strong>
-                                            {{order.payment.payment_id}}
-                                        </li>
-                                        <li>
-                                            <strong>Order Date:</strong>
-                                            {{order.created_at}}
-                                        </li>
-                                        <li>
-                                            <strong>Status:</strong>
-                                            {{order.payment.status}}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+    }
 
-                            <div class="invoice-items">
-                                <div
-                                    class="table-responsive"
-                                    style="overflow: hidden; outline: none"
-                                    tabindex="0"
-                                >
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th class="per70 text-center">
-                                                    Products
-                                                </th>
-                                                <th class="per5 text-center">
-                                                    Qty
-                                                </th>
-                                                <th class="per25 text-center">
-                                                    Total
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for item in order_detail %}
-                                            <tr>
-                                                <td>
-                                                    {{item.product.product_name}}
-                                                    <p class="text-muted small">
-                                                        {% if item.variations.all %}
-                                                            {% for i in item.variations.all %}
-                                                                {{ i.variation_category|capfirst }} : {{ i.variation_value|capfirst }}<br/>
-                                                            {% endfor %}
-                                                        {% endif %}
-                                                    </p>
-                                                </td>
-                                                <td class="text-center">
-                                                    {{item.quantity}}
-                                                </td>
-                                                <td class="text-center">
-                                                    ${{item.product_price}} USD
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th
-                                                    colspan="2"
-                                                    class="text-right"
-                                                >
-                                                    Sub Total:
-                                                </th>
-                                                <th class="text-center">
-                                                    ${{subtotal}} USD
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                <th
-                                                    colspan="2"
-                                                    class="text-right"
-                                                >
-                                                    Tax:
-                                                </th>
-                                                <th class="text-center">
-                                                    ${{order.tax}} USD
-                                                </th>
-                                            </tr>
+    .invoice-header {
+        background: white;
+        padding: 20px 30px;
+        border-bottom: 2px solid #e9ecef;
+    }
 
-                                            <tr>
-                                                <th
-                                                    colspan="2"
-                                                    class="text-right"
-                                                >
-                                                    Grand Total:
-                                                </th>
-                                                <th class="text-center">
-                                                    ${{order.order_total}} USD
-                                                </th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="invoice-footer mt25 text-center">
-                                <p>Thank you for shopping with us!</p>
-                                <a
-                                    href="{% url 'my_orders' %}"
-                                    class="btn btn-sm btn-outline-secondary"
-                                    >← Back to My Orders</a
-                                >
-                            </div>
+    .invoice-logo img {
+        max-height: 50px;
+    }
+
+    .invoice-to {
+        text-align: right;
+    }
+
+    .invoice-to h6 {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        color: #6c757d;
+    }
+
+    .invoice-to p {
+        margin: 0;
+        line-height: 1.6;
+        font-size: 0.9rem;
+        color: #495057;
+    }
+
+    .invoice-body {
+        padding: 25px 30px;
+    }
+
+    .order-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .info-card {
+        background: #f8f9fa;
+        padding: 12px 15px;
+        border-radius: 4px;
+        border: 2px solid #e9ecef;
+        border-left: 4px solid #28a745;
+    }
+
+    .info-card label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .info-card .value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .products-section h5 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #2d3748;
+    }
+
+    .products-list {
+        border: 2px solid #28a745;
+        border-radius: 6px;
+        overflow: hidden;
+        background: white;
+    }
+
+    .product-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+        transition: background 0.2s;
+    }
+
+    .product-item:hover {
+        background: #f8f9fa;
+    }
+
+    .product-item:last-child {
+        border-bottom: none;
+    }
+
+    .product-details h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #2d3748;
+    }
+
+    .product-variations {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .variation-badge {
+        background: #e9ecef;
+        color: #495057;
+        padding: 4px 10px;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border: 1px solid #dee2e6;
+    }
+
+    .product-qty {
+        text-align: center;
+        min-width: 60px;
+    }
+
+    .product-qty label {
+        font-size: 0.7rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .product-qty .value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .product-price {
+        text-align: right;
+        min-width: 120px;
+    }
+
+    .product-price label {
+        font-size: 0.7rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .product-price .value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #28a745;
+    }
+
+    .order-summary {
+        background: white;
+        padding: 15px 20px;
+        border-radius: 6px;
+        border: 2px solid #28a745;
+        margin-top: 20px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        font-size: 1rem;
+    }
+
+    .summary-row.total {
+        border-top: 2px solid #dee2e6;
+        margin-top: 10px;
+        padding-top: 15px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    .summary-row.total .amount {
+        color: #28a745;
+    }
+
+    .invoice-footer {
+        background: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        border-top: 2px solid #e9ecef;
+    }
+
+    .invoice-footer p {
+        margin: 0 0 15px 0;
+        font-size: 0.95rem;
+        font-weight: 400;
+        color: #6c757d;
+    }
+
+    .btn-back {
+        background: #28a745;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 4px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.2s;
+        border: none;
+    }
+
+    .btn-back:hover {
+        background: #218838;
+        color: white;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .order-info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .invoice-to {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .product-item {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .product-qty,
+        .product-price {
+            text-align: left;
+        }
+    }
+</style>
+
+<div class="order-detail-wrapper">
+    <div class="container">
+        <!-- Invoice Card -->
+        <div class="invoice-card">
+            <!-- Invoice Header -->
+            <div class="invoice-header">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="invoice-logo">
+                            <img
+                                src="{% static '/images/logo.png' %}"
+                                alt="BeeShop Logo"
+                            />
                         </div>
-                        <!-- col-lg-12 end here -->
                     </div>
-                    <!-- End .row -->
+                    <div class="col-md-6">
+                        <div class="invoice-to">
+                            <h6>Gửi Đến</h6>
+                            <p><strong>{{order.full_name}}</strong></p>
+                            <p>{{order.full_address}}</p>
+                            <p>{{order.city}}, {{order.state}}</p>
+                            <p>{{order.country}}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- End .panel -->
+
+            <!-- Invoice Body -->
+            <div class="invoice-body">
+                <!-- Order Information -->
+                <div class="order-info-grid">
+                    <div class="info-card">
+                        <label>Mã Đơn Hàng</label>
+                        <div class="value">#{{order.order_number}}</div>
+                    </div>
+                    <div class="info-card">
+                        <label>Mã Giao Dịch</label>
+                        <div class="value">{{order.payment.payment_id}}</div>
+                    </div>
+                    <div class="info-card">
+                        <label>Ngày Đặt Hàng</label>
+                        <div class="value">
+                            {{order.created_at|date:"d/m/Y, H:i"}}
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <label>Trạng Thái</label>
+                        <div class="value">
+                            <span
+                                class="status-badge {% if order.payment.status == 'COMPLETED' %}status-completed{% else %}status-pending{% endif %}"
+                            >
+                                {{order.payment.status}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Section -->
+                <div class="products-section">
+                    <h5>Sản Phẩm Đã Đặt</h5>
+                    <div class="products-list">
+                        {% for item in order_detail %}
+                        <div class="product-item">
+                            <div class="product-details">
+                                <h6>{{item.product.product_name}}</h6>
+                                {% if item.variations.all %}
+                                <div class="product-variations">
+                                    {% for variation in item.variations.all %}
+                                    <span class="variation-badge"
+                                        >{{ variation.variation_category|capfirst }}:{{ variation.variation_value|capfirst }}</span
+                         >
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="product-qty">
+                                <label>Số Lượng</label>
+                                <div class="value">{{item.quantity}}</div>
+                            </div>
+                            <div class="product-price">
+                                <label>Thành Tiền</label>
+                                <div class="value">${{item.product_price}}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <span>Tạm Tính:</span>
+                        <span class="amount">${{subtotal}} USD</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Thuế:</span>
+                        <span class="amount">${{order.tax}} USD</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Tổng Cộng:</span>
+                        <span class="amount">${{order.order_total}} USD</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invoice Footer -->
+            <div class="invoice-footer">
+                <p>❤️ Cảm ơn bạn đã mua sắm tại BeeShop!</p>
+                <a href="{% url 'my_orders' %}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Quay Lại Đơn Hàng
+                </a>
+            </div>
         </div>
-        <!-- col-lg-12 end here -->
     </div>
 </div>
 

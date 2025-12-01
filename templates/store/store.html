@@ -23,6 +23,7 @@
 	<aside class="col-md-3">
 
 <div class="card">
+	<form method="GET" action="{% url 'store' %}" id="filterForm">
 	<article class="filter-group">
 		<header class="card-header">
 			<a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
@@ -52,25 +53,12 @@
 		</header>
 		<div class="filter-content collapse show" id="collapse_4" style="">
 			<div class="card-body">
+			{% for size in all_sizes %}
 			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> XS </span>
+			    <input type="checkbox" name="size" value="{{ size }}" {% if size in selected_sizes %}checked{% endif %} onchange="document.getElementById('filterForm').submit()">
+			    <span class="btn btn-light"> {{ size }} </span>
 			  </label>
-
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> SM </span>
-			  </label>
-
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> LG </span>
-			  </label>
-
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> XXL </span>
-			  </label>
+			{% endfor %}
 		</div><!-- card-body.// -->
 		</div>
 	</article> <!-- filter-group .// -->
@@ -88,35 +76,36 @@
 				<div class="form-row">
 				<div class="form-group col-md-6">
 				  <label>Min</label>
-				  <!-- <input class="form-control" placeholder="$0" type="number"> -->
-				  	<select class="mr-2 form-control">
-						<option value="0">$0</option>
-						<option value="50">$50</option>
-						<option value="100">$100</option>
-						<option value="150">$150</option>
-						<option value="200">$200</option>
-						<option value="500">$500</option>
-						<option value="1000">$1000</option>
+				  	<select class="mr-2 form-control" name="min_price" id="min_price">
+						<option value="" {% if not min_price %}selected{% endif %}>$0</option>
+						<option value="50" {% if min_price == '50' %}selected{% endif %}>$50</option>
+						<option value="100" {% if min_price == '100' %}selected{% endif %}>$100</option>
+						<option value="150" {% if min_price == '150' %}selected{% endif %}>$150</option>
+						<option value="200" {% if min_price == '200' %}selected{% endif %}>$200</option>
+						<option value="500" {% if min_price == '500' %}selected{% endif %}>$500</option>
+						<option value="1000" {% if min_price == '1000' %}selected{% endif %}>$1000</option>
 					</select>
 				</div>
 				<div class="form-group text-right col-md-6">
 				  <label>Max</label>
-				  	<select class="mr-2 form-control">
-						<option value="50">$50</option>
-						<option value="100">$100</option>
-						<option value="150">$150</option>
-						<option value="200">$200</option>
-						<option value="500">$500</option>
-						<option value="1000">$1000</option>
-						<option value="2000">$2000+</option>
+				  	<select class="mr-2 form-control" name="max_price" id="max_price">
+						<option value="" {% if not max_price %}selected{% endif %}>No limit</option>
+						<option value="50" {% if max_price == '50' %}selected{% endif %}>$50</option>
+						<option value="100" {% if max_price == '100' %}selected{% endif %}>$100</option>
+						<option value="150" {% if max_price == '150' %}selected{% endif %}>$150</option>
+						<option value="200" {% if max_price == '200' %}selected{% endif %}>$200</option>
+						<option value="500" {% if max_price == '500' %}selected{% endif %}>$500</option>
+						<option value="1000" {% if max_price == '1000' %}selected{% endif %}>$1000</option>
+						<option value="2000" {% if max_price == '2000' %}selected{% endif %}>$2000+</option>
 					</select>
 				</div>
 				</div> <!-- form-row.// -->
-				<button class="btn btn-block btn-primary">Apply</button>
+				<button type="submit" class="btn btn-block btn-primary">Apply</button>
+				<a href="{% url 'store' %}" class="btn btn-block btn-light mt-2">Clear Filters</a>
 			</div><!-- card-body.// -->
 		</div>
 	</article> <!-- filter-group .// -->
-
+	</form>
 </div> <!-- card.// -->
 
 	</aside> <!-- col.// -->

@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product, ReviewRating, ProductGallery
+from .models import Product, ReviewRating, ProductGallery, Variation
 from category.models import Category
 from carts.models import CartItem
 from django.db.models import Q
@@ -19,20 +19,49 @@ def store(request, category_slug=None):
     if category_slug != None:
         categories = get_object_or_404(Category, slug=category_slug)
         products = Product.objects.filter(category=categories, is_available=True)
-        paginator = Paginator(products, 1)
-        page = request.GET.get('page')
-        paged_products = paginator.get_page(page)
-        product_count = products.count()
     else:
         products = Product.objects.all().filter(is_available=True).order_by('id')
-        paginator = Paginator(products, 3)
-        page = request.GET.get('page')
-        paged_products = paginator.get_page(page)
-        product_count = products.count()
+    
+    # Get filter parameters from request
+    sizes = request.GET.getlist('size')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    
+    # Apply size filter
+    if sizes:
+        # Get products that have variations matching the selected sizes
+        product_ids = Variation.objects.filter(
+            variation_category='size',
+            variation_value__in=sizes,
+            is_active=True
+        ).values_list('product_id', flat=True).distinct()
+        products = products.filter(id__in=product_ids)
+    
+    # Apply price filter
+    if min_price:
+        products = products.filter(price__gte=int(min_price))
+    if max_price:
+        products = products.filter(price__lte=int(max_price))
+    
+    # Pagination
+    paginator = Paginator(products, 6)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    product_count = products.count()
+    
+    # Get all available sizes for the filter
+    all_sizes = Variation.objects.filter(
+        variation_category='size',
+        is_active=True
+    ).values_list('variation_value', flat=True).distinct().order_by('variation_value')
 
     context = {
         'products': paged_products,
         'product_count': product_count,
+        'all_sizes': all_sizes,
+        'selected_sizes': sizes,
+        'min_price': min_price,
+        'max_price': max_price,
     }
     return render(request, 'store/store.html', context)
 

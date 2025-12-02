@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% load i18n %} {% block content %}
 
 <style>
     .order-detail-wrapper {
@@ -297,7 +297,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="invoice-to">
-                            <h6>Gửi Đến</h6>
+                            <h6>{% trans "Shipped To" %}</h6>
                             <p><strong>{{order.full_name}}</strong></p>
                             <p>{{order.full_address}}</p>
                             <p>{{order.city}}, {{order.state}}</p>
@@ -312,21 +312,21 @@
                 <!-- Order Information -->
                 <div class="order-info-grid">
                     <div class="info-card">
-                        <label>Mã Đơn Hàng</label>
+                        <label>{% trans "Order Number" %}</label>
                         <div class="value">#{{order.order_number}}</div>
                     </div>
                     <div class="info-card">
-                        <label>Mã Giao Dịch</label>
+                        <label>{% trans "Transaction ID" %}</label>
                         <div class="value">{{order.payment.payment_id}}</div>
                     </div>
                     <div class="info-card">
-                        <label>Ngày Đặt Hàng</label>
+                        <label>{% trans "Order Date" %}</label>
                         <div class="value">
                             {{order.created_at|date:"d/m/Y, H:i"}}
                         </div>
                     </div>
                     <div class="info-card">
-                        <label>Trạng Thái</label>
+                        <label>{% trans "Status" %}</label>
                         <div class="value">
                             <span
                                 class="status-badge {% if order.payment.status == 'COMPLETED' %}status-completed{% else %}status-pending{% endif %}"
@@ -339,7 +339,7 @@
 
                 <!-- Products Section -->
                 <div class="products-section">
-                    <h5>Sản Phẩm Đã Đặt</h5>
+                    <h5>{% trans "Products Ordered" %}</h5>
                     <div class="products-list">
                         {% for item in order_detail %}
                         <div class="product-item">
@@ -349,18 +349,21 @@
                                 <div class="product-variations">
                                     {% for variation in item.variations.all %}
                                     <span class="variation-badge"
-                                        >{{ variation.variation_category|capfirst }}:{{ variation.variation_value|capfirst }}</span
-                         >
+                                        >{{
+                                        variation.variation_category|capfirst
+                                        }}:{{ variation.variation_value|capfirst
+                                        }}</span
+                                    >
                                     {% endfor %}
                                 </div>
                                 {% endif %}
                             </div>
                             <div class="product-qty">
-                                <label>Số Lượng</label>
+                                <label>{% trans "Quantity" %}</label>
                                 <div class="value">{{item.quantity}}</div>
                             </div>
                             <div class="product-price">
-                                <label>Thành Tiền</label>
+                                <label>{% trans "Amount" %}</label>
                                 <div class="value">${{item.product_price}}</div>
                             </div>
                         </div>
@@ -371,15 +374,15 @@
                 <!-- Order Summary -->
                 <div class="order-summary">
                     <div class="summary-row">
-                        <span>Tạm Tính:</span>
+                        <span>{% trans "Subtotal:" %}</span>
                         <span class="amount">${{subtotal}} USD</span>
                     </div>
                     <div class="summary-row">
-                        <span>Thuế:</span>
+                        <span>{% trans "Tax:" %}</span>
                         <span class="amount">${{order.tax}} USD</span>
                     </div>
                     <div class="summary-row total">
-                        <span>Tổng Cộng:</span>
+                        <span>{% trans "Grand Total:" %}</span>
                         <span class="amount">${{order.order_total}} USD</span>
                     </div>
                 </div>
@@ -387,9 +390,10 @@
 
             <!-- Invoice Footer -->
             <div class="invoice-footer">
-                <p>❤️ Cảm ơn bạn đã mua sắm tại BeeShop!</p>
+                <p>❤️ {% trans "Thank you for shopping at BeeShop!" %}</p>
                 <a href="{% url 'my_orders' %}" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Quay Lại Đơn Hàng
+                    <i class="fas fa-arrow-left"></i> {% trans "Back to Orders"
+                    %}
                 </a>
             </div>
         </div>

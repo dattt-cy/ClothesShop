@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% load i18n %} {% block content %}
 <section class="section-conten padding-y bg" style="min-height: 70vh">
     <div class="container">
         <div class="row">
@@ -8,7 +8,7 @@
                     <div
                         class="card-header d-flex align-items-center justify-content-between"
                     >
-                        <h5 class="mb-0">My Orders</h5>
+                        <h5 class="mb-0">{% trans "My Orders" %}</h5>
                     </div>
                     <div class="card-body p-0">
                         {% include 'includes/alerts.html' %} {% if orders %}
@@ -17,11 +17,13 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th>#</th>
-                                        <th>Order Number</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th>Ordered?</th>
-                                        <th class="text-right">Total</th>
+                                        <th>{% trans "Order Number" %}</th>
+                                        <th>{% trans "Date" %}</th>
+                                        <th>{% trans "Status" %}</th>
+                                        <th>{% trans "Ordered?" %}</th>
+                                        <th class="text-right">
+                                            {% trans "Total" %}
+                                        </th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -37,10 +39,10 @@
                                         <td>
                                             {% if o.is_ordered %}<span
                                                 class="badge badge-success"
-                                                >Yes</span
+                                                >{% trans "Yes" %}</span
                                             >{% else %}<span
                                                 class="badge badge-secondary"
-                                                >No</span
+                                                >{% trans "No" %}</span
                                             >{% endif %}
                                         </td>
                                         <td class="text-right">
@@ -50,7 +52,7 @@
                                             <a
                                                 href="{% url 'order_detail' o.order_number %}"
                                                 class="btn btn-sm btn-outline-primary"
-                                                >Details</a
+                                                >{% trans "Details" %}</a
                                             >
                                         </td>
                                     </tr>
@@ -61,12 +63,12 @@
                         {% else %}
                         <div class="p-4">
                             <p class="mb-1 text-muted">
-                                You have no completed orders yet.
+                                {% trans "You have no completed orders yet." %}
                             </p>
                             <a
                                 href="{% url 'store' %}"
                                 class="btn btn-sm btn-primary"
-                                >Go shopping</a
+                                >{% trans "Go shopping" %}</a
                             >
                         </div>
                         {% endif %}

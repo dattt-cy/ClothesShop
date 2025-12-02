@@ -1,16 +1,312 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
+
+<style>
+/* Page Header */
+.section-pagetop {
+	background: linear-gradient(90deg, #9b59b6 0%, #8e44ad 100%);
+	padding: 12px 0;
+	margin-bottom: 20px;
+	position: relative;
+	overflow: hidden;
+}
+
+.section-pagetop::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background: repeating-linear-gradient(
+		90deg,
+		white 0px,
+		white 10px,
+		transparent 10px,
+		transparent 20px
+	);
+	opacity: 0.3;
+	transform: translateY(-50%);
+}
+
+.coupon-banner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 15px;
+	color: white;
+	font-size: 0.95rem;
+	position: relative;
+	z-index: 1;
+}
+
+.coupon-icon {
+	font-size: 1.3rem;
+	animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+	0%, 100% { transform: scale(1); }
+	50% { transform: scale(1.1); }
+}
+
+.coupon-text {
+	font-weight: 500;
+	letter-spacing: 0.3px;
+}
+
+.coupon-highlight {
+	background: rgba(255, 255, 255, 0.2);
+	padding: 3px 10px;
+	border-radius: 3px;
+	font-weight: 600;
+	margin: 0 5px;
+}
+
+/* Sidebar */
+.card {
+	border: 1px solid #dee2e6;
+	border-radius: 6px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+	margin-bottom: 15px;
+}
+
+.card-header {
+	background: white;
+	border-bottom: 1px solid #e9ecef;
+	padding: 12px 15px;
+}
+
+.card-header .title {
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: #2d3748;
+	margin: 0;
+}
+
+.card-header a {
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.card-header .icon-control {
+	color: #28a745;
+}
+
+.list-menu {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.list-menu li {
+	border-bottom: 1px solid #f1f1f1;
+}
+
+.list-menu li:last-child {
+	border-bottom: none;
+}
+
+.list-menu a {
+	display: block;
+	padding: 8px 12px;
+	color: #495057;
+	text-decoration: none;
+	transition: all 0.2s;
+	font-size: 0.9rem;
+}
+
+.list-menu a:hover {
+	background: #f8f9fa;
+	color: #28a745;
+	padding-left: 16px;
+}
+
+/* Size Filter */
+.checkbox-btn {
+	display: inline-block;
+	margin: 5px;
+}
+
+.checkbox-btn input[type="checkbox"] {
+	display: none;
+}
+
+.checkbox-btn .btn {
+	border: 1px solid #dee2e6;
+	padding: 6px 12px;
+	font-weight: 500;
+	font-size: 0.85rem;
+	transition: all 0.2s;
+	cursor: pointer;
+}
+
+.checkbox-btn input[type="checkbox"]:checked + .btn {
+	background: #28a745;
+	border-color: #28a745;
+	color: white;
+}
+
+.checkbox-btn .btn:hover {
+	border-color: #28a745;
+	color: #28a745;
+}
+
+/* Price Range */
+.form-control {
+	border: 1px solid #dee2e6;
+	border-radius: 4px;
+	transition: border-color 0.2s;
+	font-size: 0.9rem;
+	padding: 6px 10px;
+}
+
+.form-control:focus {
+	border-color: #28a745;
+	box-shadow: none;
+}
+
+/* Buttons */
+.btn-primary {
+	background: #28a745;
+	border-color: #28a745;
+	font-weight: 500;
+	transition: all 0.2s;
+}
+
+.btn-primary:hover {
+	background: #218838;
+	border-color: #218838;
+	box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.btn-light {
+	background: white;
+	border: 2px solid #e9ecef;
+	color: #495057;
+	transition: all 0.2s;
+}
+
+.btn-light:hover {
+	background: #f8f9fa;
+	border-color: #28a745;
+	color: #28a745;
+}
+
+/* Product Grid */
+.card-product-grid {
+	border: 1px solid #dee2e6;
+	border-radius: 6px;
+	transition: all 0.3s ease;
+	height: 100%;
+	margin-bottom: 20px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.card-product-grid:hover {
+	border-color: #28a745;
+	box-shadow: 0 3px 10px rgba(40, 167, 69, 0.12);
+	transform: translateY(-2px);
+}
+
+.card-product-grid .img-wrap {
+	background: #f8f9fa;
+	border-radius: 5px 5px 0 0;
+	overflow: hidden;
+	display: block;
+	height: 220px;
+}
+
+.card-product-grid .img-wrap img {
+	width: 100%;
+	height: 220px;
+	object-fit: cover;
+	transition: transform 0.3s ease;
+}
+
+.card-product-grid:hover .img-wrap img {
+	transform: scale(1.03);
+}
+
+.card-product-grid .info-wrap {
+	padding: 12px;
+}
+
+.card-product-grid .title {
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: #2d3748;
+	text-decoration: none;
+	display: block;
+	margin-bottom: 8px;
+	min-height: 40px;
+}
+
+.card-product-grid .title:hover {
+	color: #28a745;
+}
+
+.card-product-grid .price {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: #28a745;
+}
+
+/* Header */
+.border-bottom {
+	border-bottom: 1px solid #dee2e6 !important;
+	padding-bottom: 12px;
+	margin-bottom: 20px;
+}
+
+.border-bottom b {
+	color: #28a745;
+	font-size: 0.95rem;
+}
+
+/* Pagination */
+.pagination .page-item.active .page-link {
+	background: #28a745;
+	border-color: #28a745;
+}
+
+.pagination .page-link {
+	color: #28a745;
+	border: 1px solid #dee2e6;
+	margin: 0 2px;
+	border-radius: 4px;
+	transition: all 0.2s;
+	padding: 6px 12px;
+	font-size: 0.9rem;
+}
+
+.pagination .page-link:hover {
+	background: #28a745;
+	border-color: #28a745;
+	color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+	color: #6c757d;
+	border-color: #e9ecef;
+}
+</style>
+
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg">
 <div class="container">
-	{% if 'search' in request.path %}
-		<h2 class="title-page">Search Result</h2>
-	{% else %}
-		<h2 class="title-page">Our Store</h2>
-	{% endif %}
-
+	<div class="coupon-banner">
+		<span class="coupon-icon">✂️</span>
+		<span class="coupon-text">COUPON</span>
+		<span class="coupon-text">-Membership Benefits-</span>
+		<span class="coupon-highlight">Handling Fee</span>
+		<span class="coupon-highlight">100% OFF Coupon Issuing</span>
+	</div>
 </div> <!-- container //  -->
 </section>
 <!-- ========================= SECTION INTRO END// ========================= -->
@@ -28,14 +324,14 @@
 		<header class="card-header">
 			<a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
 				<i class="icon-control fa fa-chevron-down"></i>
-				<h6 class="title">Categories</h6>
+				<h6 class="title">{% trans "Categories" %}</h6>
 			</a>
 		</header>
 		<div class="filter-content collapse show" id="collapse_1" style="">
 			<div class="card-body">
 
 				<ul class="list-menu">
-					<li><a href="{% url 'store' %}">All Products  </a></li>
+					<li><a href="{% url 'store' %}">{% trans "All Products" %}  </a></li>
 					{% for category in links %}
 				<li><a href="{{ category.get_url }}">{{ category.category_name }}  </a></li>
 					{% endfor %}
@@ -48,7 +344,7 @@
 		<header class="card-header">
 			<a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
 				<i class="icon-control fa fa-chevron-down"></i>
-				<h6 class="title">Sizes </h6>
+				<h6 class="title">{% trans "Sizes" %} </h6>
 			</a>
 		</header>
 		<div class="filter-content collapse show" id="collapse_4" style="">
@@ -67,7 +363,7 @@
 		<header class="card-header">
 			<a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
 				<i class="icon-control fa fa-chevron-down"></i>
-				<h6 class="title">Price range </h6>
+				<h6 class="title">{% trans "Price range" %} </h6>
 			</a>
 		</header>
 		<div class="filter-content collapse show" id="collapse_3" style="">
@@ -75,7 +371,7 @@
 
 				<div class="form-row">
 				<div class="form-group col-md-6">
-				  <label>Min</label>
+				  <label>{% trans "Min" %}</label>
 				  	<select class="mr-2 form-control" name="min_price" id="min_price">
 						<option value="" {% if not min_price %}selected{% endif %}>$0</option>
 						<option value="50" {% if min_price == '50' %}selected{% endif %}>$50</option>
@@ -87,9 +383,9 @@
 					</select>
 				</div>
 				<div class="form-group text-right col-md-6">
-				  <label>Max</label>
+				  <label>{% trans "Max" %}</label>
 				  	<select class="mr-2 form-control" name="max_price" id="max_price">
-						<option value="" {% if not max_price %}selected{% endif %}>No limit</option>
+						<option value="" {% if not max_price %}selected{% endif %}>{% trans "No limit" %}</option>
 						<option value="50" {% if max_price == '50' %}selected{% endif %}>$50</option>
 						<option value="100" {% if max_price == '100' %}selected{% endif %}>$100</option>
 						<option value="150" {% if max_price == '150' %}selected{% endif %}>$150</option>
@@ -100,8 +396,8 @@
 					</select>
 				</div>
 				</div> <!-- form-row.// -->
-				<button type="submit" class="btn btn-block btn-primary">Apply</button>
-				<a href="{% url 'store' %}" class="btn btn-block btn-light mt-2">Clear Filters</a>
+				<button type="submit" class="btn btn-block btn-primary">{% trans "Apply" %}</button>
+				<a href="{% url 'store' %}" class="btn btn-block btn-light mt-2">{% trans "Clear Filters" %}</a>
 			</div><!-- card-body.// -->
 		</div>
 	</article> <!-- filter-group .// -->
@@ -113,7 +409,7 @@
 
 <header class="border-bottom mb-4 pb-3">
 		<div class="form-inline">
-			<span class="mr-md-auto"><b>{{ product_count }}</b> items found </span>
+			<span class="mr-md-auto"><b>{{ product_count }}</b> {% trans "items found" %} </span>
 
 		</div>
 </header><!-- sect-heading -->

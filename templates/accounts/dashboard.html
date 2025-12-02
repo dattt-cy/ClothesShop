@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% load i18n %} {% block content %}
 
 <section class="section-conten padding-y bg dashboard-wrap">
     <style>
@@ -181,10 +181,10 @@
                             </div>
                             <div>
                                 <h4 class="mb-1 hero-title">
-                                    Xin chào, {{ user.full_name }}
+                                    {% trans "Hello" %}, {{ user.full_name }}
                                 </h4>
                                 <div class="hero-sub">
-                                    Chúc bạn một ngày mua sắm thật vui vẻ ✨
+                                    {% trans "Have a great shopping day" %} ✨
                                 </div>
                             </div>
                         </div>
@@ -193,19 +193,17 @@
                                 class="btn btn-light btn-soft d-inline-flex align-items-center"
                                 href="{% url 'my_orders' %}"
                                 ><i class="fas fa-shopping-bag fa-fw mr-2"></i
-                                >Đơn hàng của tôi</a
+                                >{% trans "My Orders" %}</a
                             >
                             <a
                                 class="btn btn-light btn-soft ml-2 d-inline-flex align-items-center"
                                 href="{% url 'edit_profile' %}"
-                                ><i class="fas fa-user-cog fa-fw mr-2"></i>Chỉnh
-                                sửa hồ sơ</a
+                                ><i class="fas fa-user-cog fa-fw mr-2"></i>{% trans "Edit Profile" %}</a
                             >
                             <a
                                 class="btn btn-light btn-soft ml-2 d-inline-flex align-items-center"
                                 href="{% url 'change_password' %}"
-                                ><i class="fas fa-lock fa-fw mr-2"></i>Đổi mật
-                                khẩu</a
+                                ><i class="fas fa-lock fa-fw mr-2"></i>{% trans "Change Password" %}</a
                             >
                         </div>
                     </div>
@@ -224,7 +222,7 @@
                                     </div>
                                     <div>
                                         <div class="muted text-nowrap">
-                                            Tổng số đơn hàng
+                                            {% trans "Total Orders" %}
                                         </div>
                                         <div class="h3 mb-0 stat-value">
                                             {{ orders_count }}
@@ -243,7 +241,7 @@
                                 </div>
                                 <div>
                                     <div class="muted">
-                                        Lần đăng nhập gần nhất
+                                        {% trans "Last Login" %}
                                     </div>
                                     <div class="stat-value">
                                         {{ user.last_login|date:"d/m/Y H:i" }}
@@ -260,7 +258,9 @@
                                     <i class="fas fa-calendar-check"></i>
                                 </div>
                                 <div>
-                                    <div class="muted">Thành viên từ</div>
+                                    <div class="muted">
+                                        {% trans "Member Since" %}
+                                    </div>
                                     <div class="stat-value">
                                         {{ user.date_joined|date:"d/m/Y" }}
                                     </div>
@@ -293,7 +293,7 @@
                                     <div class="small mt-1">
                                         <i class="fas fa-phone mr-1"></i
                                         ><span class="phone"
-                                            >{{ user.phone_number|default:"Chưa cập nhật" }}</span
+                                            >{{ user.phone_number|default:"{% trans 'Not updated' %}" }}</span
                                         >
                                     </div>
                                     {% endif %}
@@ -308,20 +308,20 @@
                         >
                             <div>
                                 <div class="muted mb-1">
-                                    Trạng thái tài khoản
+                                    {% trans "Account Status" %}
                                 </div>
                                 <div class="h5 mb-0">
                                     {% if user.is_active %}
                                     <span class="text-success"
                                         ><i class="fas fa-check-circle mr-1"></i
-                                        >Đã kích hoạt</span
+                                        >{% trans "Activated" %}</span
                                     >
                                     {% else %}
                                     <span class="text-warning"
                                         ><i
                                             class="fas fa-exclamation-circle mr-1"
                                         ></i
-                                        >Chưa kích hoạt</span
+                                        >{% trans "Not Activated" %}</span
                                     >
                                     {% endif %}
                                 </div>
@@ -329,8 +329,7 @@
                             <a
                                 class="btn btn-light btn-soft d-inline-flex align-items-center"
                                 href="{% url 'edit_profile' %}"
-                                ><i class="fas fa-user-edit fa-fw mr-2"></i>Cập
-                                nhật thông tin</a
+                                ><i class="fas fa-user-edit fa-fw mr-2"></i>{%trans "Update Information" %}</a
                             >
                         </div>
                     </div>

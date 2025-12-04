@@ -1,3 +1,25 @@
 {
-    "cSpell.words": ["securelogin", "uidb"]
+    "cSpell.words": ["securelogin", "uidb"],
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false,
+    "[html]": {
+        "editor.formatOnSave": false,
+        "editor.formatOnPaste": false,
+        "editor.autoIndent": "none",
+        "editor.defaultFormatter": null
+    },
+    "[django-html]": {
+        "editor.formatOnSave": false,
+        "editor.formatOnPaste": false,
+        "editor.autoIndent": "none",
+        "editor.defaultFormatter": null
+    },
+    "files.associations": {
+        "*.html": "html",
+        "templates/**/*.html": "django-html"
+    },
+    "emmet.includeLanguages": {
+        "django-html": "html"
+    }
 }

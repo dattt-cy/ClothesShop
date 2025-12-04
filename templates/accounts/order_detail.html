@@ -349,10 +349,7 @@
                                 <div class="product-variations">
                                     {% for variation in item.variations.all %}
                                     <span class="variation-badge"
-                                        >{{
-                                        variation.variation_category|capfirst
-                                        }}:{{ variation.variation_value|capfirst
-                                        }}</span
+                                        >{{ variation.variation_category|capfirst }}:{{ variation.variation_value|capfirst }}</span
                                     >
                                     {% endfor %}
                                 </div>
@@ -392,8 +389,7 @@
             <div class="invoice-footer">
                 <p>❤️ {% trans "Thank you for shopping at BeeShop!" %}</p>
                 <a href="{% url 'my_orders' %}" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> {% trans "Back to Orders"
-                    %}
+                    <i class="fas fa-arrow-left"></i> {% trans "Back to Orders" %}
                 </a>
             </div>
         </div>

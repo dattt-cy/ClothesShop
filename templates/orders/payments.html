@@ -67,20 +67,14 @@
                                                 <a
                                                     href="{{ cart_item.product.get_url }}"
                                                     class="title text-dark"
-                                                    >{{
-                                                    cart_item.product.product_name
-                                                    }}</a
+                                                    >{{ cart_item.product.product_name }}</a
                                                 >
                                                 <p class="text-muted small">
-                                                    {% if
-                                                    cart_item.variations.all %}
-                                                    {% for item in
-                                                    cart_item.variations.all %}
-                                                    {{ item.variation_category |
-                                                    capfirst }} : {{
-                                                    item.variation_value |
-                                                    capfirst }} <br />
-                                                    {% endfor %} {% endif %}
+                                                    {% if cart_item.variations.all %}
+                                                    {% for item in cart_item.variations.all %}
+                                                    <span style="display: inline-block; margin-right: 10px;">{{ item.variation_category|capfirst }}: {{ item.variation_value|capfirst }}</span>
+                                                    {% endfor %}
+                                                    {% endif %}
                                                 </p>
                                             </figcaption>
                                         </figure>
@@ -94,8 +88,7 @@
                                     <td>
                                         <div class="price-wrap">
                                             <var class="price"
-                                                >$ {{ cart_item.sub_total
-                                                }}</var
+                                                >$ {{ cart_item.sub_total }}</var
                                             >
                                             <small class="text-muted">
                                                 $ {{ cart_item.product.price }}

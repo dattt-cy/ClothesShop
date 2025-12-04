@@ -47,19 +47,14 @@
                                             <a
                                                 href="{{ cart_item.product.get_url }}"
                                                 class="title text-dark"
-                                                >{{
-                                                cart_item.product.product_name
-                                                }}</a
+                                                >{{ cart_item.product.product_name }}</a
                                             >
                                             <p class="text-muted small">
-                                                {% if cart_item.variations.all
-                                                %} {% for item in
-                                                cart_item.variations.all %} {{
-                                                item.variation_category |
-                                                capfirst }} : {{
-                                                item.variation_value | capfirst
-                                                }} <br />
-                                                {% endfor %} {% endif %}
+                                                {% if cart_item.variations.all %}
+                                                {% for item in cart_item.variations.all %}
+                                                {{ item.variation_category | capfirst }} : {{ item.variation_value | capfirst }} <br />
+                                                {% endfor %}
+                                                {% endif %}
                                             </p>
                                         </figcaption>
                                     </figure>
@@ -88,9 +83,7 @@
                                                     action="{% url 'add_cart' cart_item.product.id %}"
                                                     method="POST"
                                                 >
-                                                    {% csrf_token %} {% for item
-                                                    in cart_item.variations.all
-                                                    %}
+                                                    {% csrf_token %} {% for item in cart_item.variations.all %}
                                                     <input
                                                         type="hidden"
                                                         name="{{ item.variation_category | lower }}"
@@ -119,8 +112,7 @@
                                             >$ {{ cart_item.sub_total }}</var
                                         >
                                         <small class="text-muted">
-                                            $ {{ cart_item.product.price }} {%
-                                            trans "each" %}
+                                            $ {{ cart_item.product.price }} {% trans "each" %}
                                         </small>
                                     </div>
                                     <!-- price-wrap .// -->

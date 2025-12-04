@@ -31,6 +31,34 @@ def _finalize_order(request, order, payment):
         product = item.product
         product.stock -= item.quantity
         product.save()
+    
+    # Lưu voucher usage nếu có
+    if 'voucher_code' in request.session and 'voucher_discount' in request.session:
+        from vouchers.models import Voucher, VoucherUsage
+        try:
+            voucher = Voucher.objects.get(code=request.session['voucher_code'])
+            voucher_discount = float(request.session['voucher_discount'])
+            
+            # Tạo voucher usage record
+            VoucherUsage.objects.create(
+                voucher=voucher,
+                user=request.user,
+                order=order,
+                discount_amount=voucher_discount,
+                order_total=order.order_total
+            )
+            
+            # Tăng used_quantity
+            voucher.used_quantity += 1
+            voucher.save()
+            
+            # Xóa voucher khỏi session
+            del request.session['voucher_code']
+            del request.session['voucher_discount']
+            
+        except Voucher.DoesNotExist:
+            pass
+    
     cart_items.delete()
     # send email
     mail_subject = 'Thank you for your order!'
@@ -102,11 +130,20 @@ def place_order(request, total=0, quantity=0,):
 
     grand_total = 0
     tax = 0
+    voucher_discount = 0
+    
     for cart_item in cart_items:
         total += (cart_item.product.price * cart_item.quantity)
         quantity += cart_item.quantity
-    tax = (2 * total)/100
-    grand_total = total + tax
+    
+    # Áp dụng voucher discount nếu có
+    if 'voucher_discount' in request.session:
+        voucher_discount = float(request.session['voucher_discount'])
+    
+    # Tính toán sau khi trừ voucher
+    discounted_total = max(0, total - voucher_discount)
+    tax = (2 * discounted_total) / 100
+    grand_total = discounted_total + tax
 
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -127,6 +164,12 @@ def place_order(request, total=0, quantity=0,):
             data.order_total = grand_total
             data.tax = tax
             data.ip = request.META.get('REMOTE_ADDR')
+            
+            # Lưu voucher info nếu có
+            if 'voucher_code' in request.session:
+                data.voucher_code = request.session.get('voucher_code')
+                data.voucher_discount = voucher_discount
+            
             data.save()
             # Generate order number
             yr = int(datetime.date.today().strftime('%Y'))
@@ -145,6 +188,7 @@ def place_order(request, total=0, quantity=0,):
                 'total': total,
                 'tax': tax,
                 'grand_total': grand_total,
+                'voucher_discount': voucher_discount,
             }
             return render(request, 'orders/payments.html', context)
     else:

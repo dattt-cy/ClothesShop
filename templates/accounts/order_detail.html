@@ -258,6 +258,98 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
+    /* Dark Mode Support */
+    [data-theme="dark"] .order-detail-wrapper {
+        background: var(--bg-primary);
+    }
+
+    [data-theme="dark"] .invoice-card {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .invoice-header {
+        background: var(--bg-secondary);
+        border-bottom-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .invoice-to h6,
+    [data-theme="dark"] .invoice-to p {
+        color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .info-card {
+        background: var(--bg-tertiary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .info-card label {
+        color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .info-card .value {
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .products-section h5 {
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .products-list {
+        background: var(--bg-secondary);
+        border-color: #28a745;
+    }
+
+    [data-theme="dark"] .product-item {
+        border-bottom-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .product-item:hover {
+        background: var(--bg-tertiary);
+    }
+
+    [data-theme="dark"] .product-details h6 {
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .variation-badge {
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .product-qty label,
+    [data-theme="dark"] .product-price label {
+        color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .product-qty .value {
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .order-summary {
+        background: var(--bg-secondary);
+        border-color: #28a745;
+    }
+
+    [data-theme="dark"] .summary-row {
+        color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .summary-row.total {
+        border-top-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .invoice-footer {
+        background: var(--bg-tertiary);
+        border-top-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .invoice-footer p {
+        color: var(--text-muted);
+    }
+
     @media (max-width: 768px) {
         .order-info-grid {
             grid-template-columns: 1fr;
@@ -372,15 +464,26 @@
                 <div class="order-summary">
                     <div class="summary-row">
                         <span>{% trans "Subtotal:" %}</span>
-                        <span class="amount">${{subtotal}} USD</span>
+                        <span class="amount">${{subtotal|floatformat:2}} USD</span>
                     </div>
+                    {% if order.voucher_discount and order.voucher_discount > 0 %}
+                    <div class="summary-row">
+                        <span class="text-success">
+                            <i class="fa fa-ticket"></i> {% trans "Voucher Discount:" %}
+                            {% if order.voucher_code %}
+                            <br><small class="text-muted">({{order.voucher_code}})</small>
+                            {% endif %}
+                        </span>
+                        <span class="amount text-success">-${{order.voucher_discount|floatformat:2}} USD</span>
+                    </div>
+                    {% endif %}
                     <div class="summary-row">
                         <span>{% trans "Tax:" %}</span>
-                        <span class="amount">${{order.tax}} USD</span>
+                        <span class="amount">${{order.tax|floatformat:2}} USD</span>
                     </div>
                     <div class="summary-row total">
                         <span>{% trans "Grand Total:" %}</span>
-                        <span class="amount">${{order.order_total}} USD</span>
+                        <span class="amount">${{order.order_total|floatformat:2}} USD</span>
                     </div>
                 </div>
             </div>

@@ -357,3 +357,103 @@ msgstr "更新"
 msgid "Requirements: minimum 8 characters, avoid common passwords, should not be all numbers."
 msgstr "要件：最低8文字、一般的なパスワードを避ける、数字のみは不可。"
 
+# Voucher and Order Detail
+msgid "Vouchers"
+msgstr "クーポン"
+
+msgid "Voucher Discount:"
+msgstr "クーポン割引："
+
+msgid "Shipped To"
+msgstr "配送先"
+
+msgid "Order Number"
+msgstr "注文番号"
+
+msgid "Transaction ID"
+msgstr "取引ID"
+
+msgid "Order Date"
+msgstr "注文日"
+
+msgid "Status"
+msgstr "ステータス"
+
+msgid "Products Ordered"
+msgstr "注文商品"
+
+msgid "Quantity"
+msgstr "数量"
+
+msgid "Amount"
+msgstr "金額"
+
+msgid "Subtotal:"
+msgstr "小計："
+
+msgid "Tax:"
+msgstr "税："
+
+msgid "Grand Total:"
+msgstr "合計："
+
+msgid "Thank you for shopping at BeeShop!"
+msgstr "BeeShopでのお買い物ありがとうございます！"
+
+msgid "Back to Orders"
+msgstr "注文に戻る"
+
+msgid "PayPal"
+msgstr "PayPal"
+
+msgid "Debit Card"
+msgstr "デビットカード"
+
+msgid "Credit Card"  
+msgstr "クレジットカード"
+
+# Wishlist
+msgid "My Wishlist"
+msgstr "ウィッシュリスト"
+
+msgid "Add to Wishlist"
+msgstr "ウィッシュリストに追加"
+
+msgid "Remove"
+msgstr "削除"
+
+msgid "Added"
+msgstr "追加済み"
+
+msgid "Your wishlist is empty"
+msgstr "ウィッシュリストは空です"
+
+msgid "Add products you love to your wishlist!"
+msgstr "お気に入りの商品をウィッシュリストに追加してください！"
+
+msgid "Continue Shopping"
+msgstr "購入を続ける"
+
+msgid "Clear All"
+msgstr "すべてクリア"
+
+msgid "Are you sure you want to clear your wishlist?"
+msgstr "ウィッシュリストをクリアしてもよろしいですか？"
+
+msgid "Product added to wishlist!"
+msgstr "商品をウィッシュリストに追加しました！"
+
+msgid "Product already in wishlist!"
+msgstr "商品はすでにウィッシュリストにあります！"
+
+msgid "Product removed from wishlist!"
+msgstr "商品をウィッシュリストから削除しました！"
+
+msgid "Product moved to cart!"
+msgstr "商品をカートに移動しました！"
+
+msgid "Product already in cart!"
+msgstr "商品はすでにカートにあります！"
+
+msgid "Wishlist cleared!"
+msgstr "ウィッシュリストをクリアしました！"

@@ -318,6 +318,61 @@ msgstr "Cảm ơn bạn đã mua sắm tại BeeShop!"
 msgid "Back to Orders"
 msgstr "Quay lại đơn hàng"
 
+msgid "PayPal"
+msgstr "PayPal"
+
+msgid "Debit Card"
+msgstr "Thẻ ghi nợ"
+
+msgid "Credit Card"  
+msgstr "Thẻ tín dụng"
+
+# Wishlist
+msgid "My Wishlist"
+msgstr "Danh sách yêu thích"
+
+msgid "Add to Wishlist"
+msgstr "Thêm vào yêu thích"
+
+msgid "Remove"
+msgstr "Xóa"
+
+msgid "Added"
+msgstr "Đã thêm"
+
+msgid "Your wishlist is empty"
+msgstr "Danh sách yêu thích trống"
+
+msgid "Add products you love to your wishlist!"
+msgstr "Thêm các sản phẩm yêu thích vào danh sách!"
+
+msgid "Continue Shopping"
+msgstr "Tiếp tục mua sắm"
+
+msgid "Clear All"
+msgstr "Xóa tất cả"
+
+msgid "Are you sure you want to clear your wishlist?"
+msgstr "Bạn có chắc muốn xóa toàn bộ danh sách yêu thích?"
+
+msgid "Product added to wishlist!"
+msgstr "Sản phẩm đã được thêm vào yêu thích!"
+
+msgid "Product already in wishlist!"
+msgstr "Sản phẩm đã có trong danh sách!"
+
+msgid "Product removed from wishlist!"
+msgstr "Sản phẩm đã bị xóa khỏi danh sách!"
+
+msgid "Product moved to cart!"
+msgstr "Sản phẩm đã chuyển vào giỏ hàng!"
+
+msgid "Product already in cart!"
+msgstr "Sản phẩm đã có trong giỏ hàng!"
+
+msgid "Wishlist cleared!"
+msgstr "Danh sách yêu thích đã được xóa!"
+
 # Edit Profile page
 msgid "Edit your profile"
 msgstr "Chỉnh sửa hồ sơ của bạn"
@@ -356,3 +411,48 @@ msgstr "Cập nhật"
 msgid "Requirements: minimum 8 characters, avoid common passwords, should not be all numbers."
 msgstr "Yêu cầu: tối thiểu 8 ký tự, tránh mật khẩu quá phổ biến, không nên chỉ là số."
 
+# Voucher and Order Detail
+msgid "Vouchers"
+msgstr "Voucher"
+
+msgid "Voucher Discount:"
+msgstr "Giảm giá Voucher:"
+
+msgid "Shipped To"
+msgstr "Gửi đến"
+
+msgid "Order Number"
+msgstr "Mã đơn hàng"
+
+msgid "Transaction ID"
+msgstr "Mã giao dịch"
+
+msgid "Order Date"
+msgstr "Ngày đặt"
+
+msgid "Status"
+msgstr "Trạng thái"
+
+msgid "Products Ordered"
+msgstr "Sản phẩm đã đặt"
+
+msgid "Quantity"
+msgstr "Số lượng"
+
+msgid "Amount"
+msgstr "Thành tiền"
+
+msgid "Subtotal:"
+msgstr "Tạm tính:"
+
+msgid "Tax:"
+msgstr "Thuế:"
+
+msgid "Grand Total:"
+msgstr "Tổng cộng:"
+
+msgid "Thank you for shopping at BeeShop!"
+msgstr "Cảm ơn bạn đã mua sắm tại BeeShop!"
+
+msgid "Back to Orders"
+msgstr "Quay lại đơn hàng"

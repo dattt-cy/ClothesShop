@@ -135,20 +135,71 @@
             </aside>
             <!-- col.// -->
             <aside class="col-lg-3">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3">
+                            <i class="fa fa-ticket text-success"></i> 
+                            {% trans "Apply Voucher" %}
+                        </h6>
+                        
+                        <div id="voucher-section">
+                            {% if request.session.voucher_code %}
+                            <!-- Voucher đã áp dụng -->
+                            <div class="alert alert-success mb-2" id="voucher-applied">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fa fa-check-circle"></i>
+                                        <strong>{{ request.session.voucher_code }}</strong>
+                                        <br>
+                                        <small>{% trans "Discount" %}: -$ {{ request.session.voucher_discount|floatformat:2 }}</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="removeVoucher()">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% else %}
+                            <!-- Form nhập voucher -->
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" id="voucher-code-input" 
+                                       placeholder="{% trans 'Enter voucher code' %}" 
+                                       style="text-transform: uppercase;">
+                                <div class="input-group-append">
+                                    <button class="btn btn-success" type="button" onclick="applyVoucher()">
+                                        {% trans "Apply" %}
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="voucher-message"></div>
+                            {% endif %}
+                        </div>
+                        
+                        <a href="{% url 'voucher_list' %}" class="btn btn-sm btn-outline-primary btn-block">
+                            <i class="fa fa-gift"></i> {% trans "View All Vouchers" %}
+                        </a>
+                    </div>
+                </div>
+                
                 <div class="card">
                     <div class="card-body">
                         <dl class="dlist-align">
                             <dt>{% trans "Total price:" %}</dt>
-                            <dd class="text-right">$ {{total}}</dd>
+                            <dd class="text-right">$ {{ total|floatformat:2 }}</dd>
                         </dl>
+                        {% if request.session.voucher_discount %}
+                        <dl class="dlist-align">
+                            <dt class="text-success">{% trans "Voucher Discount:" %}</dt>
+                            <dd class="text-right text-success">-$ {{ request.session.voucher_discount|floatformat:2 }}</dd>
+                        </dl>
+                        {% endif %}
                         <dl class="dlist-align">
                             <dt>{% trans "Tax:" %}</dt>
-                            <dd class="text-right">$ {{tax}}</dd>
+                            <dd class="text-right">$ {{ tax|floatformat:2 }}</dd>
                         </dl>
                         <dl class="dlist-align">
                             <dt>{% trans "Grand Total:" %}</dt>
                             <dd class="text-right text-dark b">
-                                <strong>$ {{grand_total}}</strong>
+                                <strong>$ {{ grand_total|floatformat:2 }}</strong>
                             </dd>
                         </dl>
                         <hr />
@@ -183,5 +234,74 @@
     <!-- container .//  -->
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
+
+<script>
+function applyVoucher() {
+    const voucherCode = document.getElementById('voucher-code-input').value.trim().toUpperCase();
+    const messageDiv = document.getElementById('voucher-message');
+    
+    if (!voucherCode) {
+        messageDiv.innerHTML = '<div class="alert alert-warning alert-sm">{% trans "Please enter voucher code" %}</div>';
+        return;
+    }
+    
+    // Get CSRF token
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    fetch('{% url "apply_voucher" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrftoken
+        },
+        body: 'voucher_code=' + encodeURIComponent(voucherCode)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload page to show updated prices
+            location.reload();
+        } else {
+            messageDiv.innerHTML = '<div class="alert alert-danger alert-sm">' + data.message + '</div>';
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+    })
+    .catch(error => {
+        messageDiv.innerHTML = '<div class="alert alert-danger alert-sm">{% trans "Error applying voucher" %}</div>';
+    });
+}
+
+function removeVoucher() {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    fetch('{% url "remove_voucher" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrftoken
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+
+// Allow Enter key to apply voucher
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('voucher-code-input');
+    if (input) {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyVoucher();
+            }
+        });
+    }
+});
+</script>
 
 {% endblock %}

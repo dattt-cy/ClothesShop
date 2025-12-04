@@ -38,6 +38,8 @@
 <!-- Dark Mode JS -->
 <script src="{% static 'js/darkmode.js' %}" type="text/javascript"></script>
 
+<!-- Wishlist JS -->
+<script src="{% static 'js/wishlist.js' %}" type="text/javascript"></script>
 
 <!-- PayPal Script -->
 <script src="https://www.paypal.com/sdk/js?client-id=AVBSMqNtoZ1IUO6lrSe6-vm9AIV1ZKN8CgXu_nINRs80xELRs650mh3yR62groIUg-GCe59Od_EFOG6O&currency=USD"></script>
@@ -55,6 +57,9 @@ $(document).ready(function() {
 
 </head>
 <body class="no-transition">
+
+  <!-- Wishlist data for JavaScript -->
+  <div id="wishlist-data" data-wishlist-ids='{{ wishlist_product_ids_json|safe }}' style="display:none;"></div>
 
   <!-- navbar -->
   {% include 'includes/navbar.html' %}

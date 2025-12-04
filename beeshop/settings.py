@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'store',
     'carts',
     'orders',
+    'vouchers',
+    'wishlist',
     # 'admin_honeypot',  # Tạm thời comment out
 ]
 
@@ -73,6 +75,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'category.context_processors.menu_links',
                 'carts.context_processors.counter',
+                'wishlist.context_processors.wishlist_counter',
             ],
             'debug': True,  # Force template reload
         },

@@ -27,7 +27,7 @@
                 <div class="card">
                     <h5 class="card-header">{% trans "Payment Method" %}</h5>
                     <div class="card-body">
-                        <p class="card-text mb-2">PayPal</p>
+                        <p class="card-text mb-2">{% trans "PayPal" %}</p>
                         <p class="card-text mb-0">
                             {% trans "Cash On Delivery (COD)" %}
                         </p>
@@ -110,16 +110,27 @@
                     <div class="card-body">
                         <dl class="dlist-align">
                             <dt>{% trans "Total price:" %}</dt>
-                            <dd class="text-right">$ {{total}}</dd>
+                            <dd class="text-right">$ {{ total|floatformat:2 }}</dd>
                         </dl>
+                        {% if voucher_discount and voucher_discount > 0 %}
+                        <dl class="dlist-align">
+                            <dt class="text-success">
+                                <i class="fa fa-ticket"></i> {% trans "Voucher Discount:" %}
+                                {% if request.session.voucher_code %}
+                                <br><small class="text-muted">({{ request.session.voucher_code }})</small>
+                                {% endif %}
+                            </dt>
+                            <dd class="text-right text-success">-$ {{ voucher_discount|floatformat:2 }}</dd>
+                        </dl>
+                        {% endif %}
                         <dl class="dlist-align">
                             <dt>{% trans "Tax:" %}</dt>
-                            <dd class="text-right">$ {{tax}}</dd>
+                            <dd class="text-right">$ {{ tax|floatformat:2 }}</dd>
                         </dl>
                         <dl class="dlist-align">
                             <dt>{% trans "Grand Total:" %}</dt>
                             <dd class="text-right text-dark b">
-                                <strong>$ {{grand_total}}</strong>
+                                <strong>$ {{ grand_total|floatformat:2 }}</strong>
                             </dd>
                         </dl>
                         <hr />
@@ -138,7 +149,7 @@
                             type="button"
                             class="btn btn-outline-primary btn-block"
                         >
-                            Thanh toán khi nhận hàng (COD)
+                            {% trans "Cash On Delivery (COD)" %}
                         </button>
                         <small
                             id="codStatus"
